@@ -1,0 +1,41 @@
+<html>
+<head>
+<title>SuperNaut</title>
+</head>
+<body>
+
+<audio id="audio" autoplay/>
+
+<script>
+
+	function getUserMedia(opts,cb,fail){
+		var mayhaps= ["getUserMedia", "webkitGetUserMedia", "mozGetUserMedia", "msGetUserMedia"]
+		for(var i in mayhaps){
+			if(navigator[mayhaps[i]])
+				return navigator[mayhaps[i]].apply(navigator,arguments)
+		}
+		if(fail)
+			fail("no browser support")
+		else throw "no user support for failing, no browser support"
+	}
+
+	var onFailSoHard = function(e) {
+		console.log('Reeeejected!', e);
+	};
+
+	// Not showing vendor prefixes.
+	getUserMedia({video: false, audio: true}, function(localMediaStream) {
+		var audio = document.querySelector('audio');
+		audio.src = window.URL.createObjectURL(localMediaStream);
+
+		// Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
+		// See crbug.com/110938.
+		audio.onloadedmetadata = function(e) {
+			console.log("Audio looping back")
+			// Ready to go. Do some stuff.
+		};
+	}, onFailSoHard);
+</script>
+
+</body>
+</html>
